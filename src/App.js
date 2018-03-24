@@ -10,15 +10,21 @@ class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      duration: null,
       printedRemaining: null,
-      Timer: null,
-      interval: null
+      timer: null,
+      intervalId: null,
+      selectedMode: null,
+      pomodoros: [
+        { label: 'Dev', duration: 0.1 },
+        { label: 'Short break', duration: 5 },
+        { label: 'Long break', duration: 15 },
+        { label: 'Work', duration: 25 },
+      ]
     }
   }
 
   timesUp () {
-    window.clearInterval(this.state.interval)
+    window.clearInterval(this.state.intervalId)
     this.setState({
       printedRemaining: 0
     })
@@ -27,34 +33,39 @@ class App extends Component {
   }
 
   updatePrintedRemainingTime () {
-    const remaining = this.state.Timer.remaining() < 0 ? 0 : this.state.Timer.remaining()
+    const remaining = this.state.timer.remaining() < 0 ? 0 : this.state.timer.remaining()
     this.setState({
       printedRemaining: remaining
     })
   }
 
-  durationChangeHandler (newDuration) {
-    if (this.state.interval) {
-      window.clearInterval(this.state.interval)
+  durationChangeHandler (pomodoro) {
+    if (this.state.intervalId) {
+      window.clearInterval(this.state.intervalId)
     }
     this.setState({
-      duration: newDuration,
-      Timer: new Timer(newDuration * 60 * 1000),
-      interval: window.setInterval(this.updatePrintedRemainingTime.bind(this), 1000)
+      selectedMode: pomodoro,
+      timer: new Timer(pomodoro.duration * 60 * 1000),
+      intervalId: window.setInterval(this.updatePrintedRemainingTime.bind(this), 1000)
     }, async () => {
-      await this.state.Timer.finished()
+      await this.state.timer.finished()
       this.timesUp()
     })
   }
 
   render () {
+    const pomodoros = this.state.pomodoros.map((pomodoro) =>
+      <Button 
+        key={pomodoro.label}
+        duration={pomodoro.duration}
+        label={pomodoro.label}
+        click={this.durationChangeHandler.bind(this, pomodoro)} />
+    )
+
     return (
       <div className="App">
         <TimePrinter duration={this.state.printedRemaining}/>
-        <Button duration="5'" click={this.durationChangeHandler.bind(this, 0.1)} />
-        <Button duration="5" click={this.durationChangeHandler.bind(this, 5)} />
-        <Button duration="15" click={this.durationChangeHandler.bind(this, 15)} />
-        <Button duration="25" click={this.durationChangeHandler.bind(this, 25)} />
+        {pomodoros}
       </div>
     );
   }
