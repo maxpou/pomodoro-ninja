@@ -1,0 +1,20 @@
+.button {
+  cursor: pointer;
+  display: inline-block;
+  outline: 0;
+  border: none;
+  vertical-align: baseline;
+  min-height: 1em;
+  -webkit-box-shadow: 0 0 0 2px #000 inset !important;
+  box-shadow: 0 0 0 2px #000;
+  margin: 0 .25em 0 0;
+  padding: .78571429em 1.5em .78571429em;
+  text-transform: none;
+  text-shadow: none;
+  font-weight: 700;
+  line-height: 1em;
+  font-style: normal;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 3px;
+}
